@@ -1,9 +1,39 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "layout": "gift-guide",
   "sections": {
     "banner": {
       "type": "gift-guide-banner",
-      "settings": {}
+      "settings": {
+        "heading": "The Gift Guide",
+        "heading_tag": "h1",
+        "heading_style": "h1",
+        "description": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.",
+        "description_mobile": "Discover Joy: Your Ultimate Holiday Gift Destination.",
+        "description_tag": "p",
+        "description_style": "body",
+        "text_color": "#000000",
+        "show_text_background": true,
+        "button_label": "SHOP NOW",
+        "button_link": "",
+        "show_text_bar": true,
+        "text_bar_text": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL",
+        "text_bar_text_mobile": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR",
+        "text_bar_text_color": "#000000",
+        "text_bar_background_color": "#f5f5f5",
+        "space_top_desktop": 0,
+        "space_top_mobile": 0,
+        "space_bottom_desktop": 0,
+        "space_bottom_mobile": 0
+      }
     },
     "grid": {
       "type": "gift-guide-grid",
@@ -11,49 +41,61 @@
         "product-1": {
           "type": "product",
           "settings": {
+            "product": "black-leather-bag",
             "hotspot_x_desktop": 62,
             "hotspot_y_desktop": 56,
-            "product": "black-leather-bag"
+            "hotspot_x_mobile": 64,
+            "hotspot_y_mobile": 14
           }
         },
         "product-2": {
           "type": "product",
           "settings": {
+            "product": "blue-silk-tuxedo",
             "hotspot_x_desktop": 85,
             "hotspot_y_desktop": 52,
-            "product": "blue-silk-tuxedo"
+            "hotspot_x_mobile": 64,
+            "hotspot_y_mobile": 14
           }
         },
         "product-3": {
           "type": "product",
           "settings": {
+            "product": "chequered-red-shirt",
             "hotspot_x_desktop": 63,
             "hotspot_y_desktop": 21,
-            "product": "chequered-red-shirt"
+            "hotspot_x_mobile": 64,
+            "hotspot_y_mobile": 14
           }
         },
         "product-4": {
           "type": "product",
           "settings": {
+            "product": "classic-leather-jacket",
             "hotspot_x_desktop": 72,
             "hotspot_y_desktop": 18,
-            "product": "classic-leather-jacket"
+            "hotspot_x_mobile": 64,
+            "hotspot_y_mobile": 14
           }
         },
         "product-5": {
           "type": "product",
           "settings": {
+            "product": "classic-varsity-top",
             "hotspot_x_desktop": 52,
             "hotspot_y_desktop": 26,
-            "product": "classic-varsity-top"
+            "hotspot_x_mobile": 64,
+            "hotspot_y_mobile": 14
           }
         },
         "product-6": {
           "type": "product",
           "settings": {
+            "product": "dark-denim-top",
             "hotspot_x_desktop": 76,
             "hotspot_y_desktop": 39,
-            "product": "dark-denim-top"
+            "hotspot_x_mobile": 64,
+            "hotspot_y_mobile": 14
           }
         }
       },
@@ -66,7 +108,23 @@
         "product-6"
       ],
       "settings": {
-        "addon_product": "dark-winter-jacket"
+        "heading": "Tisso vison in the wild",
+        "heading_tag": "h2",
+        "heading_style": "h2",
+        "addon_product": "dark-winter-jacket",
+        "trigger_color": "Black",
+        "trigger_size": "M",
+        "text_open_popup": "Choose options for",
+        "text_choose": "Please choose your",
+        "text_added": "Added to cart",
+        "text_view_cart": "View cart",
+        "text_addon_added": "was added to your cart as an add-on",
+        "text_sold_out": "This variant is sold out",
+        "text_error": "Something went wrong, please try again",
+        "space_top_desktop": 90,
+        "space_top_mobile": 40,
+        "space_bottom_desktop": 90,
+        "space_bottom_mobile": 40
       }
     }
   },
