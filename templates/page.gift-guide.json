@@ -1,0 +1,77 @@
+{
+  "layout": "gift-guide",
+  "sections": {
+    "banner": {
+      "type": "gift-guide-banner",
+      "settings": {}
+    },
+    "grid": {
+      "type": "gift-guide-grid",
+      "blocks": {
+        "product-1": {
+          "type": "product",
+          "settings": {
+            "hotspot_x_desktop": 62,
+            "hotspot_y_desktop": 56,
+            "product": "black-leather-bag"
+          }
+        },
+        "product-2": {
+          "type": "product",
+          "settings": {
+            "hotspot_x_desktop": 85,
+            "hotspot_y_desktop": 52,
+            "product": "blue-silk-tuxedo"
+          }
+        },
+        "product-3": {
+          "type": "product",
+          "settings": {
+            "hotspot_x_desktop": 63,
+            "hotspot_y_desktop": 21,
+            "product": "chequered-red-shirt"
+          }
+        },
+        "product-4": {
+          "type": "product",
+          "settings": {
+            "hotspot_x_desktop": 72,
+            "hotspot_y_desktop": 18,
+            "product": "classic-leather-jacket"
+          }
+        },
+        "product-5": {
+          "type": "product",
+          "settings": {
+            "hotspot_x_desktop": 52,
+            "hotspot_y_desktop": 26,
+            "product": "classic-varsity-top"
+          }
+        },
+        "product-6": {
+          "type": "product",
+          "settings": {
+            "hotspot_x_desktop": 76,
+            "hotspot_y_desktop": 39,
+            "product": "dark-denim-top"
+          }
+        }
+      },
+      "block_order": [
+        "product-1",
+        "product-2",
+        "product-3",
+        "product-4",
+        "product-5",
+        "product-6"
+      ],
+      "settings": {
+        "addon_product": "dark-winter-jacket"
+      }
+    }
+  },
+  "order": [
+    "banner",
+    "grid"
+  ]
+}

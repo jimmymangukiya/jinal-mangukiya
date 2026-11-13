@@ -1,0 +1,700 @@
+/* Product grid, popup and "added to cart" notification. Shared styles are in gift-guide-base.css */
+
+/* Grid: 2 columns on mobile, 3 on desktop. Space above and below comes from .gift-guide-section-space. */
+
+/* Font and size come from the text style classes in gift-guide-base.css */
+.gift-guide-grid__heading {
+  margin-bottom: 20px;
+  color: var(--gift-guide-color-black);
+  text-align: center; /* centered on mobile (Figma), left on desktop */
+}
+
+.gift-guide-grid__list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gift-guide-grid__item {
+  position: relative;
+  aspect-ratio: 169 / 186; /* mobile image proportions in the design */
+  overflow: hidden;
+  background: var(--gift-guide-color-gray);
+}
+
+.gift-guide-grid__media,
+.gift-guide-grid__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.gift-guide-grid__image {
+  object-fit: cover;
+}
+
+.gift-guide-grid__image--placeholder {
+  background: var(--gift-guide-color-gray);
+  color: rgba(0, 0, 0, 0.25); /* the placeholder SVG is drawn with currentColor */
+}
+
+/* "+" button (SVG icon, no hover effect) */
+
+.gift-guide-grid__hotspot {
+  position: absolute;
+  left: var(--hotspot-x-mobile, 64%);
+  top: var(--hotspot-y-mobile, 14%);
+  display: block;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  transform: translate(-50%, -50%); /* the percentages point to the middle of the button */
+  cursor: pointer;
+}
+
+.gift-guide-grid__hotspot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Keyboard focus ring (accessibility), not a hover effect */
+.gift-guide-grid__hotspot:focus-visible {
+  outline: 2px solid var(--gift-guide-color-black);
+  outline-offset: 2px;
+}
+
+@media screen and (min-width: 990px) {
+  .gift-guide-grid__heading {
+    margin-bottom: 30px;
+    text-align: left;
+  }
+
+  .gift-guide-grid__list {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .gift-guide-grid__item {
+    aspect-ratio: 433 / 443; /* desktop image proportions in the design */
+  }
+
+  .gift-guide-grid__hotspot {
+    left: var(--hotspot-x-desktop, 60%);
+    top: var(--hotspot-y-desktop, 50%);
+  }
+}
+
+
+/* Popup (native <dialog>), 311 x 447 like in Figma */
+
+.gift-guide-popup {
+  width: min(311px, calc(100% - 32px));
+  max-width: none;
+  max-height: calc(100dvh - 32px); /* on small screens the popup scrolls instead of being cut off */
+  overflow-y: auto;
+  padding: 0; /* so a click on the dialog itself means "click on the backdrop" */
+  border: 0;
+  background: var(--gift-guide-color-white);
+  color: var(--gift-guide-color-black);
+  font-family: var(--font-gift-guide, 'Jost');
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.gift-guide-popup::backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Lock page scroll while a popup is open */
+body:has(.gift-guide-popup[open]) {
+  overflow: hidden;
+}
+
+.gift-guide-popup__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 447px;
+  padding: 36px 20px 25px;
+}
+
+.gift-guide-popup__close {
+  position: absolute;
+  top: 16px;
+  right: 18px;
+  display: flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Image + title, price, description */
+
+.gift-guide-popup__summary {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  height: 140px; /* same as the image, so a long description never pushes the fields down */
+  margin: 0 -3px 10px; /* the image starts 17px from the edge, the fields below start at 20px */
+}
+
+.gift-guide-popup__image {
+  flex-shrink: 0;
+  width: 120px;
+  height: 140px;
+  object-fit: cover;
+}
+
+.gift-guide-popup__info {
+  min-width: 0;
+  padding-top: 12px;
+}
+
+/* Title: Jost Light 16px. It always keeps room for 2 lines so the price stays at the same height. */
+.gift-guide-popup__title {
+  min-height: 2.4em; /* 2 lines x 120% */
+  margin: 0;
+  font-family: inherit; /* the theme's h3 style would use another font */
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+/* Price: Lustria 16px */
+.gift-guide-popup__price {
+  margin: 0 0 12px;
+  font-family: var(--gift-guide-font-serif);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+/* Description: Jost Light 14px, line height 110%, letter spacing -1% */
+.gift-guide-popup__description {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4; /* Figma shows 4 lines, longer text is cut with ... */
+  margin: 0;
+  overflow: hidden;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+/* Option fields (Color, Size) */
+
+.gift-guide-popup__field {
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  border: 0;
+}
+
+/* The last field has no bottom margin: the footer adds the 50px of space above "Add to cart" */
+.gift-guide-popup__field:has(+ .gift-guide-popup__footer) {
+  margin-bottom: 0;
+}
+
+/* Label: Jost 14px, line height 130%, color #333 */
+.gift-guide-popup__label {
+  display: block;
+  margin: 0 0 6px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0;
+  color: #333;
+}
+
+/* Color swatches */
+
+.gift-guide-popup__swatches {
+  position: relative;
+  isolation: isolate; /* the sliding indicator stays behind the swatches */
+  display: grid;
+  grid-template-columns: repeat(var(--swatch-count, 2), 1fr);
+}
+
+/* One black indicator slides from the old color to the new one. The script sets --swatch-index. */
+.gift-guide-popup__swatches::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: calc(100% / var(--swatch-count, 2));
+  height: 100%;
+  background: var(--gift-guide-color-black);
+  transform: translateX(calc(var(--swatch-index, 0) * 100%));
+  transition: transform 0.4s ease;
+}
+
+.gift-guide-popup__swatch {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding-left: 15px; /* the color name starts 15px from the left edge */
+  border: 1px solid var(--gift-guide-color-black);
+  cursor: pointer;
+  /* Color name: Jost 18px, line height 100%, letter spacing -2%, Title case */
+  font-size: 18px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: capitalize;
+  z-index: 1; /* above the sliding indicator */
+  transition: color 0.4s ease; /* the name turns white while the indicator arrives */
+}
+
+/* The two swatches share one border line */
+.gift-guide-popup__swatch + .gift-guide-popup__swatch {
+  margin-left: -1px;
+}
+
+/* Colored bar on the left, it separates the colors from each other */
+.gift-guide-popup__swatch::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  z-index: 1;
+  background: var(--swatch-color, var(--gift-guide-color-black));
+  border-right: 1px solid rgba(0, 0, 0, 0.15); /* keeps a white swatch visible */
+}
+
+/* The color name stays above the indicator */
+.gift-guide-popup__swatch-name {
+  position: relative;
+  z-index: 1;
+}
+
+/* Real radio input, hidden visually but still keyboard + screen reader friendly */
+.gift-guide-popup__swatch-input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Selected color: white text on the black indicator (as in the prototype) */
+.gift-guide-popup__swatch:has(.gift-guide-popup__swatch-input:checked) {
+  color: var(--gift-guide-color-white);
+}
+
+.gift-guide-popup__swatch:has(.gift-guide-popup__swatch-input:focus-visible) {
+  outline: 2px solid var(--gift-guide-color-black);
+  outline-offset: 2px;
+}
+
+/* Color that is not available with the chosen options */
+.gift-guide-popup__swatch:has(.gift-guide-popup__swatch-input:disabled) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.gift-guide-popup__swatch:has(.gift-guide-popup__swatch-input:disabled) .gift-guide-popup__swatch-name {
+  text-decoration: line-through;
+}
+
+/* People who prefer less motion get an instant change */
+@media (prefers-reduced-motion: reduce) {
+  .gift-guide-popup__swatch,
+  .gift-guide-popup__swatches::before {
+    transition: none;
+  }
+}
+
+/* Size dropdown (custom listbox) */
+
+.gift-guide-select {
+  position: relative;
+}
+
+.gift-guide-select__trigger {
+  display: flex;
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  border: 1px solid var(--gift-guide-color-black);
+  background: var(--gift-guide-color-white);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Text in the box: Jost 16px, line height 100%, letter spacing -2% */
+.gift-guide-select__value {
+  flex: 1;
+  align-self: center;
+  padding-left: 13px;
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+/* After a size is chosen the value is centered in the box (as in the prototype) */
+.gift-guide-select.has-value .gift-guide-select__value {
+  padding-left: 0;
+  text-align: center;
+}
+
+/* Arrow box on the right, separated by a vertical line */
+.gift-guide-select__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  border-left: 1px solid var(--gift-guide-color-black);
+}
+
+.gift-guide-select__arrow svg {
+  transition: transform 0.2s ease;
+}
+
+.gift-guide-select__trigger[aria-expanded='true'] .gift-guide-select__arrow svg {
+  transform: rotate(180deg);
+}
+
+.gift-guide-select__trigger:focus-visible {
+  outline: 2px solid var(--gift-guide-color-black);
+  outline-offset: 2px;
+}
+
+/* White list right under the box. Height follows the design: about 98px (2.7 rows), then it scrolls. */
+.gift-guide-select__list {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  max-height: 98px;
+  margin: -1px 0 0; /* overlaps the box border so the two borders do not double up */
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+  border: 1px solid var(--gift-guide-color-black);
+  background: var(--gift-guide-color-white);
+}
+
+.gift-guide-select__list[hidden] {
+  display: none;
+}
+
+/* Every row is 36px high with centered text */
+.gift-guide-select__option {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  font-size: 16px;
+  letter-spacing: -0.02em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Chosen, hovered and focused size: black with white text (Figma) */
+.gift-guide-select__option[aria-selected='true'],
+.gift-guide-select__option:hover,
+.gift-guide-select__option:focus-visible {
+  outline: none;
+  background: var(--gift-guide-color-black);
+  color: var(--gift-guide-color-white);
+}
+
+.gift-guide-select__option[aria-disabled='true'] {
+  opacity: 0.4;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}
+
+.gift-guide-select__option[aria-disabled='true']:hover {
+  background: none;
+  color: inherit;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-guide-select__option {
+    transition: none;
+  }
+}
+
+/* Message + "Add to cart" */
+
+/* Footer: 50px of space above "Add to cart" (Figma). margin-top: auto keeps it at the bottom, so extra height goes above the space, not below the button. */
+.gift-guide-popup__footer {
+  position: relative;
+  margin-top: auto;
+  padding-top: 50px;
+}
+
+/* Status message: shown inside the 50px space above the button. An empty <p> is hidden by the theme. */
+.gift-guide-popup__message {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  height: 50px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+.gift-guide-popup__message.is-error {
+  color: #b3261e;
+}
+
+/* Button: black, Jost 16px uppercase. Figma puts the text 77px from the left and the arrow 30px after it. */
+.gift-guide-popup__submit {
+  width: 100%;
+  justify-content: flex-start;
+  gap: 30px;
+  padding: 12.3px 0 12.3px 77px; /* 20.48px line height + padding = 45px high */
+  font-size: 16px;
+  line-height: 20.48px;
+}
+
+.gift-guide-popup__submit[aria-busy='true'] {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+
+/* From 1920px (Figma 4K): a smaller "+" that turns into an "x", a product card that opens the popup, and a popup that ignores the page zoom */
+
+/* the popup keeps 311 x 447, so the page zoom is cancelled for it */
+.gift-guide-popup {
+  zoom: calc(1 / var(--gift-guide-page-zoom, 1));
+}
+
+/* Product card: thumbnail + title + price, under the "+" */
+.gift-guide-card {
+  position: absolute;
+  left: var(--hotspot-x-desktop, 60%);
+  top: calc(var(--hotspot-y-desktop, 50%) + 16px);
+  z-index: 3;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 136px; /* Figma 4K: 364px / 2.667 */
+  padding: 13px 8px 15px;
+  border: 0;
+  background: var(--gift-guide-color-white);
+  color: var(--gift-guide-color-black);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* The right edge of the card is 17px right of the middle of the "+" (Figma) */
+  transform: translateX(calc(-100% + 17px));
+  animation: gift-guide-card-in 0.25s ease;
+}
+
+.gift-guide-card[hidden] {
+  display: none;
+}
+
+.gift-guide-card:focus-visible {
+  outline: 2px solid var(--gift-guide-color-black);
+  outline-offset: 2px;
+}
+
+.gift-guide-card__image {
+  flex-shrink: 0;
+  width: 43px;
+  height: 48px;
+  object-fit: cover;
+}
+
+.gift-guide-card__info {
+  display: block;
+  min-width: 0;
+}
+
+/* Title: Jost Light, always room for 2 lines so the price stays at the same height */
+.gift-guide-card__title {
+  display: block;
+  min-height: 2.2em;
+  font-size: 12px;
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+.gift-guide-card__price {
+  display: block;
+  margin-top: 9px;
+  font-family: var(--gift-guide-font-serif);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+@keyframes gift-guide-card-in {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-100% + 17px)) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(calc(-100% + 17px));
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  /* 4K grid: photos 919.78 x 943.14 (344.9 x 353.7 after the zoom), 16px gaps, 1066.7px wide */
+  .gift-guide-grid {
+    max-width: calc(1066.7px + 2 * var(--gift-guide-gutter));
+  }
+
+  .gift-guide-grid__list {
+    gap: 16px;
+  }
+
+  .gift-guide-grid__item {
+    aspect-ratio: 919.78 / 943.14; /* the 4K photo proportions */
+  }
+
+  .gift-guide-grid__hotspot {
+    width: 17px;
+    height: 17px;
+  }
+
+  /* The plus makes a 45 degree turn and becomes an "x" while the card is open */
+  .gift-guide-grid__hotspot svg path {
+    transform-origin: center;
+    transition: transform 0.25s ease;
+  }
+
+  .gift-guide-grid__hotspot[aria-expanded='true'] svg path {
+    transform: rotate(45deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-guide-card {
+    animation: none;
+  }
+
+  .gift-guide-grid__hotspot svg path {
+    transition: none;
+  }
+}
+
+
+/* "Added to cart" notification (top right) */
+
+.gift-guide-toast {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 1000; /* above the page; the popup is already closed when this shows */
+  display: flex;
+  gap: 12px;
+  width: min(340px, calc(100% - 32px));
+  padding: 16px;
+  border: 1px solid var(--gift-guide-color-black);
+  background: var(--gift-guide-color-white);
+  color: var(--gift-guide-color-black);
+  font-family: inherit;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+  /* Hidden state. It slides in from the right when .is-visible is added */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(24px);
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s linear 0.3s;
+}
+
+.gift-guide-toast.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.gift-guide-toast__items {
+  display: grid;
+  gap: 12px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.gift-guide-toast__item {
+  display: flex;
+  gap: 12px;
+}
+
+.gift-guide-toast__image {
+  flex-shrink: 0;
+  width: 64px;
+  height: 75px;
+  object-fit: cover;
+}
+
+.gift-guide-toast__body {
+  flex: 1;
+  min-width: 0;
+  padding-right: 20px; /* room for the close button */
+}
+
+.gift-guide-toast__message {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.gift-guide-toast__product,
+.gift-guide-toast__note {
+  margin: 0 0 4px;
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.gift-guide-toast__note {
+  opacity: 0.7;
+}
+
+.gift-guide-toast__link {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  color: inherit;
+}
+
+.gift-guide-toast__close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  padding: 4px;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-guide-toast {
+    transition: none;
+    transform: none;
+  }
+}

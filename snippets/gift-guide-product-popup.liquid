@@ -1,0 +1,179 @@
+{%- comment %} Product popup (<dialog>). Params: product, popup_id (block id, keeps element ids unique). {% endcomment -%}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign popup_image = current_variant.featured_image | default: product.featured_image
+
+  comment
+    Price like Figma: "980,00€" (comma decimals, symbol after). The symbol is what is left of 0 | money
+    after removing 0 | money_without_currency; the "." and "," are swapped.
+  endcomment
+  assign zero_without_symbol = 0 | money_without_currency
+  assign price_symbol = 0 | money | remove: zero_without_symbol | strip
+  assign current_price = current_variant.price | money_without_currency | replace: ',', '|' | replace: '.', ',' | replace: '|', '.' | append: price_symbol
+-%}
+
+{%- comment %} Small product card for 1920px and wider; click opens the popup {% endcomment -%}
+<button
+  type="button"
+  class="gift-guide-card"
+  aria-controls="gift-guide-popup-{{ popup_id }}"
+  aria-label="{{ product.title | escape }}"
+  hidden
+  data-popup-card
+>
+  {%- if popup_image != blank -%}
+    {{ popup_image | image_url: width: 120 | image_tag: class: 'gift-guide-card__image', alt: '', loading: 'lazy', widths: '60, 120', sizes: '45px' }}
+  {%- endif -%}
+  <span class="gift-guide-card__info">
+    <span class="gift-guide-card__title">{{ product.title }}</span>
+    <span class="gift-guide-card__price">{{ current_price }}</span>
+  </span>
+</button>
+
+<dialog
+  class="gift-guide-popup"
+  id="gift-guide-popup-{{ popup_id }}"
+  aria-labelledby="gift-guide-popup-title-{{ popup_id }}"
+  data-popup
+>
+  <form class="gift-guide-popup__inner" method="post" action="{{ routes.cart_add_url }}" novalidate data-popup-form>
+
+    <button type="button" class="gift-guide-popup__close" aria-label="{{ 'accessibility.close' | t }}" data-popup-close>
+      <svg width="12" height="12" viewBox="0 0 11 11" fill="none" aria-hidden="true" focusable="false">
+        <path d="M1 1L10 10M10 1L1 10" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+    </button>
+
+    {%- comment %} Image + title, price and description {% endcomment -%}
+    <div class="gift-guide-popup__summary">
+      {%- if popup_image != blank -%}
+        {{ popup_image | image_url: width: 240 | image_tag: class: 'gift-guide-popup__image', alt: product.title, loading: 'lazy', widths: '120, 240', sizes: '120px' }}
+      {%- endif -%}
+
+      <div class="gift-guide-popup__info">
+        <h3 class="gift-guide-popup__title" id="gift-guide-popup-title-{{ popup_id }}">{{ product.title }}</h3>
+        <p class="gift-guide-popup__price" data-popup-price>{{ current_price }}</p>
+        <p class="gift-guide-popup__description">{{ product.description | strip_html | truncatewords: 22 }}</p>
+      </div>
+    </div>
+
+    {%- comment %} Color option becomes swatches (first), other options (Size...) become dropdowns {% endcomment -%}
+        {%- for option in product.options_with_values -%}
+      {%- assign option_key = option.name | downcase -%}
+      {%- if option_key == 'color' or option_key == 'colour' -%}
+
+        {%- comment %} Color swatches: a colored bar on the left + the color name {% endcomment -%}
+        <fieldset class="gift-guide-popup__field">
+          <legend class="gift-guide-popup__label">{{ option.name }}</legend>
+          <div class="gift-guide-popup__swatches" style="--swatch-count: {{ option.values.size }};" data-swatches>
+            {%- for value in option.values -%}
+              {%- assign value_name = value.name | default: value -%}
+              {%- assign swatch_color = value.swatch.color | default: value_name | handleize -%}
+              <label class="gift-guide-popup__swatch" style="--swatch-color: {{ swatch_color }};">
+                <input
+                  type="radio"
+                  class="gift-guide-popup__swatch-input"
+                  name="option-{{ option.position }}-{{ popup_id }}"
+                  value="{{ value_name | escape }}"
+                  data-option-position="{{ option.position }}"
+                  {% if value_name == current_variant.options[forloop.parentloop.index0] %}checked{% endif %}
+                >
+                <span class="gift-guide-popup__swatch-name">{{ value_name }}</span>
+              </label>
+            {%- endfor -%}
+          </div>
+        </fieldset>
+
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- for option in product.options_with_values -%}
+      {%- assign option_key = option.name | downcase -%}
+
+      {%- comment %} Skip color (shown above) and the "Default Title" option {% endcomment -%}
+      {%- if option_key == 'color' or option_key == 'colour' or option.name == 'Title' and option.values.size == 1 -%}
+        {%- continue -%}
+      {%- endif -%}
+
+
+        {%- comment %} Dropdown: custom listbox so the list can be styled (white, same height as the box) {% endcomment -%}
+        <div class="gift-guide-popup__field">
+          <span class="gift-guide-popup__label" id="gift-guide-label-{{ popup_id }}-{{ option.position }}">{{ option.name }}</span>
+
+          <div class="gift-guide-select" data-gift-guide-select>
+            <input type="hidden" value="" data-option-position="{{ option.position }}">
+
+            <button
+              type="button"
+              class="gift-guide-select__trigger"
+              id="gift-guide-trigger-{{ popup_id }}-{{ option.position }}"
+              aria-haspopup="listbox"
+              aria-expanded="false"
+              aria-labelledby="gift-guide-label-{{ popup_id }}-{{ option.position }} gift-guide-trigger-{{ popup_id }}-{{ option.position }}"
+              data-select-trigger
+            >
+              <span class="gift-guide-select__value" data-select-value>Choose your {{ option.name | downcase }}</span>
+              <span class="gift-guide-select__arrow" aria-hidden="true">
+                <svg width="14" height="8" viewBox="0 0 14 8" fill="none" focusable="false">
+                  <path d="M1 1L7 7L13 1" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+              </span>
+            </button>
+
+            <ul
+              class="gift-guide-select__list"
+              role="listbox"
+              aria-labelledby="gift-guide-label-{{ popup_id }}-{{ option.position }}"
+              tabindex="-1"
+              hidden
+              data-select-list
+            >
+              {%- for value in option.values -%}
+                {%- assign value_name = value.name | default: value -%}
+                <li
+                  class="gift-guide-select__option"
+                  role="option"
+                  aria-selected="false"
+                  tabindex="-1"
+                  data-value="{{ value_name | escape }}"
+                >{{ value_name }}</li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        </div>
+
+      
+    {%- endfor -%}
+
+    {%- comment %}
+      Footer: 50px of space above the button (Figma). Status messages (errors, success)
+      are shown inside that space.
+    {% endcomment -%}
+    <div class="gift-guide-popup__footer">
+      {%- comment %} Status message (errors, success). aria-live so screen readers announce it. {% endcomment -%}
+      <p class="gift-guide-popup__message" role="status" aria-live="polite" data-popup-message></p>
+
+      <button type="submit" class="gift-guide-button gift-guide-button--primary gift-guide-popup__submit" data-popup-submit>
+        <span>{{ 'products.product.add_to_cart' | t }}</span>
+        {%- render 'gift-guide-arrow' -%}
+      </button>
+    </div>
+
+    {%- comment %} Variant data used by the script (id, options, availability, formatted price, image) {% endcomment -%}
+    <script type="application/json" data-popup-variants>
+      [
+        {%- for variant in product.variants -%}
+          {%- assign variant_image = variant.featured_image | default: product.featured_image -%}
+          {
+            "id": {{ variant.id }},
+            "options": {{ variant.options | json }},
+            "available": {{ variant.available | json }},
+            "price": {{ variant.price | money_without_currency | replace: ',', '|' | replace: '.', ',' | replace: '|', '.' | append: price_symbol | json }},
+            "image": {% if variant_image != blank %}{{ variant_image | image_url: width: 240 | json }}{% else %}null{% endif %}
+          }{% unless forloop.last %},{% endunless %}
+        {%- endfor -%}
+      ]
+    </script>
+  </form>
+</dialog>

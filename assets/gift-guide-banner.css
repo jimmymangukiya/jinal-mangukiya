@@ -1,0 +1,256 @@
+/* Banner and text bar. Shared container and button styles are in gift-guide-base.css */
+
+/* Banner: on desktop the pattern image is behind the text, on mobile it is under the text with the button on top */
+
+.gift-guide-banner {
+  /* Text color comes from the theme editor (inline style) */
+  --gift-guide-banner-text: var(--gift-guide-color-black);
+  /* Mobile: extra 12px below the subtitle only, the row gap stays 24px */
+  --gift-guide-banner-subtitle-gap: 12px;
+
+  position: relative;
+  display: grid;
+  /* Mobile rows: heading, description, image. The button is placed on top of the image. */
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    'heading'
+    'description'
+    'media';
+  row-gap: 24px;
+  padding-top: 49px; /* Figma mobile: the title starts 49px below the header */
+  padding-bottom: 9px; /* Figma mobile: small white space between the image and the text bar */
+  padding-inline: 0; /* the mobile image goes edge to edge */
+  background: var(--gift-guide-color-white);
+  color: var(--gift-guide-banner-text);
+}
+
+/* Pattern image */
+.gift-guide-banner__picture {
+  grid-area: media;
+  display: block;
+}
+
+/* Mobile: the image area is 247px high (Figma), the picture is cropped to fill it */
+.gift-guide-banner__picture {
+  height: 247px;
+  overflow: hidden;
+}
+
+.gift-guide-banner__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Placeholder shown in the theme editor until a pattern image is uploaded */
+.gift-guide-banner__picture--placeholder {
+  min-height: 247px; /* mobile image height in the design */
+  background: var(--gift-guide-color-white);
+  color: rgba(0, 0, 0, 0.25); /* the placeholder SVG is drawn with currentColor */
+}
+
+/* The placeholder is an SVG, so object-fit doesn't work: center it and crop the sides */
+.gift-guide-banner__picture--placeholder .gift-guide-banner__image {
+  position: relative;
+  left: 50%;
+  width: auto;
+  min-width: 100%;
+  height: 100%;
+  transform: translateX(-50%);
+}
+
+/* Mobile: the wrapper disappears, so heading, description and button become grid items */
+.gift-guide-banner__text {
+  display: contents;
+}
+
+/* Font and size come from the text style classes in gift-guide-base.css */
+.gift-guide-banner__heading {
+  grid-area: heading;
+  padding-inline: var(--gift-guide-gutter);
+  text-align: center;
+}
+
+/* Mobile shows the mobile description, desktop shows the normal one */
+.gift-guide-banner__description-desktop {
+  display: none;
+}
+
+.gift-guide-banner__description {
+  grid-area: description;
+  margin-bottom: var(--gift-guide-banner-subtitle-gap);
+  padding-inline: var(--gift-guide-gutter);
+  text-align: center;
+}
+
+/* Look and hover come from .gift-guide-button--primary, only placement and size are set here */
+.gift-guide-banner__button {
+  /* Same grid cell as the image, so it sits on top of it (mobile) */
+  grid-area: media;
+  align-self: end;
+  justify-self: center;
+  margin-bottom: 32px;
+
+  /* Size is padding only, no fixed width / height (Figma mobile: 192 x 44) */
+  justify-content: flex-start;
+  gap: 24.2px;
+  padding: 11.76px 19px 11.76px 36px;
+  line-height: 20.48px;
+}
+
+@media screen and (min-width: 990px) {
+  .gift-guide-banner {
+    /* Text and button stack in the bottom-left corner, on top of the image */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    min-height: 780px;
+    padding-bottom: 52px;
+    /* The banner is full width, the text keeps 67px from the edge of the 1440px content area */
+    padding-inline: max(67px, calc((100% - var(--gift-guide-container-width)) / 2 + 67px));
+  }
+
+  /* Image becomes the banner background */
+  .gift-guide-banner__picture {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    height: auto; /* top and bottom are set by inset */
+  }
+
+  /* Desktop: heading, description and button are stacked in one column */
+  .gift-guide-banner__text {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* everything, including the button, sticks to the left */
+    gap: 50px;
+    max-width: 490px;
+  }
+
+  /* Optional white box behind the text. Its padding is cancelled by a negative margin and a wider max-width, so the text does not move */
+  .gift-guide-banner__text--background {
+    --gift-guide-banner-text-padding: 50px;
+
+    padding: var(--gift-guide-banner-text-padding);
+    margin: calc(var(--gift-guide-banner-text-padding) * -1);
+    max-width: calc(490px + var(--gift-guide-banner-text-padding) * 2);
+    background: var(--gift-guide-color-white);
+  }
+
+  .gift-guide-banner__heading,
+  .gift-guide-banner__description {
+    padding-inline: 0;
+    text-align: left;
+  }
+
+  .gift-guide-banner__description {
+    margin-bottom: 0; /* the 50px gap of the text column is used on desktop */
+  }
+
+  .gift-guide-banner__description-desktop {
+    display: inline;
+  }
+
+  .gift-guide-banner__description-mobile {
+    display: none;
+  }
+
+  .gift-guide-banner__button {
+    align-self: flex-start; /* left side (the mobile rule above centers it) */
+    margin-bottom: 0;
+
+    /* Desktop (Figma 220 x 50), padding only */
+    gap: 28.8px;
+    padding: 14.76px 22.6px 14.76px 55.8px;
+  }
+}
+
+
+/* From 1920px (Figma 4K): the banner text is scaled by 0.8825 (title 164.78px in 4K = 61.8px here) and starts further from the left */
+
+@media screen and (min-width: 1920px) {
+  .gift-guide-banner {
+    --gift-guide-banner-4k-scale: 0.8825;
+
+    padding-bottom: 82px;
+    padding-inline: max(141px, calc((100% - var(--gift-guide-container-width)) / 2 + 141px));
+  }
+
+  /* Text column: 426px wide, title -> text 48px, text -> button 40px */
+  .gift-guide-banner__text {
+    gap: 0;
+    max-width: 426px;
+  }
+
+  /* white box: wider by its padding, so the text keeps 426px */
+  .gift-guide-banner__text--background {
+    max-width: calc(426px + var(--gift-guide-banner-text-padding) * 2);
+  }
+
+  .gift-guide-banner__heading {
+    margin-bottom: 48px;
+    font-size: calc(var(--text-size-desktop, var(--text-size-mobile)) * var(--gift-guide-banner-4k-scale));
+  }
+
+  .gift-guide-banner__description {
+    margin-bottom: 40px;
+    font-size: calc(var(--text-size-desktop, var(--text-size-mobile)) * var(--gift-guide-banner-4k-scale));
+  }
+
+  /* Button: the same shape as on desktop, made 0.8825 times smaller, still only padding */
+  .gift-guide-banner__button {
+    gap: 25.4px;
+    padding: 13px 19.9px 13px 49.2px;
+    font-size: 14.12px;
+    line-height: 18.07px;
+  }
+
+  .gift-guide-banner__button .gift-guide-button__arrow {
+    width: 22.9px;
+    height: auto;
+  }
+}
+
+
+/* Text bar under the banner (rendered by the banner section) */
+
+.gift-guide-text-bar {
+  /* Colors come from the theme editor (inline style) */
+  --gift-guide-text-bar-text: var(--gift-guide-color-black);
+  --gift-guide-text-bar-background: var(--gift-guide-color-gray);
+
+  padding-block: 10px;
+  background: var(--gift-guide-text-bar-background);
+  color: var(--gift-guide-text-bar-text);
+  text-align: center;
+}
+
+.gift-guide-text-bar__text {
+  margin: 0;
+  font-size: 14px; /* Figma mobile: 14px, desktop: 16px */
+  line-height: 13.5px; /* 10px + 13.5px + 10px = 33.5px high (Figma 4K: 89.33px / 2.667) */
+  text-transform: uppercase;
+}
+
+/* Mobile shows the mobile text, desktop shows the desktop text */
+.gift-guide-text-bar__text-desktop {
+  display: none;
+}
+
+@media screen and (min-width: 990px) {
+  .gift-guide-text-bar__text {
+    font-size: 16px;
+  }
+
+  .gift-guide-text-bar__text-desktop {
+    display: inline;
+  }
+
+  .gift-guide-text-bar__text-mobile {
+    display: none;
+  }
+}
