@@ -1,0 +1,197 @@
+/* Header. Shared container and button styles are in gift-guide-base.css */
+
+/* Header: logo | message | button on desktop, hamburger | logo on mobile */
+
+.gift-guide-header {
+  /* logo width comes from the theme editor, 151px is the Figma size */
+  --gift-guide-header-logo-width: 151px;
+
+  position: relative; /* the mobile dropdown is positioned against the header */
+  z-index: 10;
+  background: var(--gift-guide-color-gray);
+  color: var(--gift-guide-color-black);
+}
+
+.gift-guide-header__container {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* logo centered on mobile */
+  min-height: 65px;
+  padding-block: 10px;
+}
+
+/* Hamburger (mobile only) */
+.gift-guide-header__menu-button {
+  position: absolute;
+  left: var(--gift-guide-gutter);
+  top: 32px; /* middle of the 64px bar */
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Figma: 18 x 10 px, three 2px lines with 2px gaps */
+  width: 18px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+
+.gift-guide-header__menu-button-line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: var(--gift-guide-color-black);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+/* The three lines turn into an "X" while the menu is open */
+.gift-guide-header__menu-button[aria-expanded='true'] .gift-guide-header__menu-button-line:nth-child(1) {
+  transform: translateY(4px) rotate(45deg);
+}
+.gift-guide-header__menu-button[aria-expanded='true'] .gift-guide-header__menu-button-line:nth-child(2) {
+  opacity: 0;
+}
+.gift-guide-header__menu-button[aria-expanded='true'] .gift-guide-header__menu-button-line:nth-child(3) {
+  transform: translateY(-4px) rotate(-45deg);
+}
+
+.gift-guide-header__menu-button:focus-visible,
+.gift-guide-header__logo:focus-visible {
+  outline: 2px solid var(--gift-guide-color-black);
+  outline-offset: 2px;
+}
+
+/* Logo */
+.gift-guide-header__logo {
+  display: block;
+  color: inherit;
+  line-height: 0; /* no extra space around the logo */
+  text-decoration: none;
+}
+
+/* Text logo (SVG), Figma size 151 x 19 */
+.gift-guide-header__logo-text {
+  display: block;
+  width: var(--gift-guide-header-logo-width);
+  height: auto;
+  aspect-ratio: 151 / 19;
+  font-family: var(--font-gift-guide, 'Jost');
+  font-weight: 500;
+  fill: currentColor;
+}
+
+/* Image logo, same 151:19 box */
+.gift-guide-header__logo-image {
+  display: block;
+  width: var(--gift-guide-header-logo-width);
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 151 / 19;
+  object-fit: contain;
+}
+
+/* Message + button: on mobile a dropdown that slides down (max-height 0 to 260px) */
+.gift-guide-header__content {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  max-height: 0;
+  padding: 0 var(--gift-guide-gutter);
+  overflow: hidden;
+  visibility: hidden; /* a closed menu can't be tabbed into */
+  background: var(--gift-guide-color-gray);
+  /* top border grows from 0 to 1px together with the slide */
+  border-top: 0 solid var(--gift-guide-color-black);
+  transition: max-height 0.35s ease, padding 0.35s ease, border-top-width 0.35s ease, visibility 0s linear 0.35s;
+}
+
+.gift-guide-header__content.is-open {
+  max-height: 260px; /* more than the content needs */
+  padding-top: 20px;
+  padding-bottom: 24px;
+  border-top-width: 1px;
+  visibility: visible;
+  transition-delay: 0s; /* visible right away when opening */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gift-guide-header__content {
+    transition: none;
+  }
+}
+
+.gift-guide-header__message {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+/* Look and hover come from .gift-guide-button--secondary. The size is padding only: 207 x 44 in Figma */
+.gift-guide-header__cta-button {
+  padding: 12px 33.84px;
+  line-height: 20px;
+}
+
+@media screen and (min-width: 990px) {
+  .gift-guide-header__container {
+    /* logo | message | button, message always centered */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 40px;
+  }
+
+  .gift-guide-header__menu-button {
+    display: none;
+  }
+
+  /* no dropdown on desktop, the children join the grid */
+  .gift-guide-header__content {
+    display: contents;
+    visibility: visible; /* visibility is inherited, so reset it */
+  }
+
+  .gift-guide-header__logo {
+    justify-self: start;
+  }
+
+  .gift-guide-header__message {
+    grid-column: 2;
+  }
+
+  .gift-guide-header__cta-button {
+    grid-column: 3;
+    justify-self: end;
+  }
+}
+
+
+/* From 1920px (Figma 4K): fixed 270px gaps, the items start from the left and are not spread to both edges */
+
+@media screen and (min-width: 1920px) {
+  .gift-guide-header__container {
+    display: flex;
+    justify-content: flex-start;
+    gap: 270px;
+  }
+
+  /* wider than the logo itself, like in Figma (the message starts at 562px) */
+  .gift-guide-header__logo {
+    min-width: 242.5px;
+  }
+
+  .gift-guide-header__message,
+  .gift-guide-header__cta-button {
+    grid-column: auto;
+    justify-self: auto;
+  }
+}
+

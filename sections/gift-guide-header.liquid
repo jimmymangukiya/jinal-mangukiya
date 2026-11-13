@@ -1,0 +1,106 @@
+{%- comment %} Header: logo, promo message and button. On mobile the message and button move into a dropdown. {% endcomment -%}
+
+{{ 'gift-guide-header.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'gift-guide-header.js' | asset_url }}" defer="defer"></script>
+
+<header
+  class="gift-guide-header"
+  style="--gift-guide-header-logo-width: {{ section.settings.logo_width }}px;"
+  data-gift-guide-header
+>
+  <div class="gift-guide-container gift-guide-header__container">
+
+    {%- comment %} Hamburger: only visible on mobile {% endcomment -%}
+    <button
+      type="button"
+      class="gift-guide-header__menu-button"
+      aria-expanded="false"
+      aria-controls="gift-guide-header-content"
+      aria-label="Open menu"
+      data-gift-guide-menu-button
+    >
+      <span class="gift-guide-header__menu-button-line"></span>
+      <span class="gift-guide-header__menu-button-line"></span>
+      <span class="gift-guide-header__menu-button-line"></span>
+    </button>
+
+    {%- comment %} Logo: image if uploaded, otherwise the text logo {% endcomment -%}
+    <a class="gift-guide-header__logo" href="{{ routes.root_url }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 453 | image_tag: loading: 'eager', alt: shop.name, class: 'gift-guide-header__logo-image', widths: '151, 302, 453', sizes: '151px' }}
+      {%- else -%}
+        {%- comment %} Text logo drawn as SVG so it is always exactly 151 x 19 (width follows the setting) {% endcomment -%}
+        <svg class="gift-guide-header__logo-text" viewBox="0 0 151 19" role="img" aria-label="{{ section.settings.logo_text | escape }}">
+          <text x="0" y="18.5" font-size="27" textLength="151" lengthAdjust="spacingAndGlyphs">{{ section.settings.logo_text | escape }}</text>
+        </svg>
+      {%- endif -%}
+    </a>
+
+    {%- comment %} Message + button. On mobile this block becomes the dropdown panel. {% endcomment -%}
+    <div class="gift-guide-header__content" id="gift-guide-header-content" data-gift-guide-content>
+      <p class="gift-guide-header__message">{{ section.settings.message }}</p>
+
+      <a class="gift-guide-button gift-guide-button--secondary gift-guide-header__cta-button" href="{{ section.settings.button_link | default: '#' }}">
+        <span>{{ section.settings.button_label }}</span>
+        {%- render 'gift-guide-arrow' -%}
+      </a>
+    </div>
+
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Gift guide header",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo image",
+      "info": "Optional. If empty, the text logo below is used."
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "label": "Logo width",
+      "info": "Same on desktop and mobile. The height follows the width.",
+      "min": 100,
+      "max": 200,
+      "step": 1,
+      "unit": "px",
+      "default": 151
+    },
+    {
+      "type": "text",
+      "id": "logo_text",
+      "label": "Logo text",
+      "default": "TISSO VISON"
+    },
+    {
+      "type": "header",
+      "content": "Message and button"
+    },
+    {
+      "type": "text",
+      "id": "message",
+      "label": "Message",
+      "default": "Find the ideal gift for your loved ones."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "CHOOSE GIFT"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    }
+  ]
+}
+{% endschema %}

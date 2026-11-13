@@ -1,0 +1,320 @@
+{%- comment %} Banner (title, description, button over the pattern image) and the optional text bar below it. {% endcomment -%}
+
+{{ 'gift-guide-banner.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+  assign desktop_image = section.settings.image_desktop
+  assign mobile_image = section.settings.image_mobile | default: desktop_image
+-%}
+
+{%- comment %} Space above and below comes from the "Section space" settings {% endcomment -%}
+<div
+  class="gift-guide-section-space"
+  style="
+    --section-space-top-desktop: {{ section.settings.space_top_desktop }}px;
+    --section-space-top-mobile: {{ section.settings.space_top_mobile }}px;
+    --section-space-bottom-desktop: {{ section.settings.space_bottom_desktop }}px;
+    --section-space-bottom-mobile: {{ section.settings.space_bottom_mobile }}px;
+  "
+>
+<section class="gift-guide-banner" style="--gift-guide-banner-text: {{ section.settings.text_color }};">
+
+  {%- comment %} Desktop image from 990px, mobile image below {% endcomment -%}
+  {%- if desktop_image != blank -%}
+    <picture class="gift-guide-banner__picture">
+      <source
+        media="(min-width: 990px)"
+        srcset="
+          {{ desktop_image | image_url: width: 1440 }} 1440w,
+          {{ desktop_image | image_url: width: 2160 }} 2160w,
+          {{ desktop_image | image_url: width: 2880 }} 2880w
+        "
+        sizes="100vw"
+      >
+      {{ mobile_image | image_url: width: 750 | image_tag: class: 'gift-guide-banner__image', alt: '', loading: 'eager', fetchpriority: 'high', widths: '375, 750, 1125', sizes: '100vw' }}
+    </picture>
+  {%- else -%}
+    {%- comment %} Placeholder until an image is chosen {% endcomment -%}
+    <div class="gift-guide-banner__picture gift-guide-banner__picture--placeholder">
+      {{ 'lifestyle-2' | placeholder_svg_tag: 'gift-guide-banner__image' }}
+    </div>
+  {%- endif -%}
+
+  {%- comment %} White box behind the text (optional) {% endcomment -%}
+  <div class="gift-guide-banner__text{% if section.settings.show_text_background %} gift-guide-banner__text--background{% endif %}">
+    {%- if section.settings.heading != blank -%}
+      <h1 class="gift-guide-banner__heading gift-guide-text gift-guide-text--{{ section.settings.heading_style }}">{{ section.settings.heading }}</h1>
+    {%- endif -%}
+
+    {%- comment %} Mobile shows a shorter description {% endcomment -%}
+    {%- assign description_mobile = section.settings.description_mobile | default: section.settings.description -%}
+    {%- if section.settings.description != blank -%}
+      <p class="gift-guide-banner__description gift-guide-text gift-guide-text--{{ section.settings.description_style }}">
+        <span class="gift-guide-banner__description-desktop">{{ section.settings.description }}</span>
+        <span class="gift-guide-banner__description-mobile">{{ description_mobile }}</span>
+      </p>
+    {%- endif -%}
+
+    {%- if section.settings.button_label != blank -%}
+      <a class="gift-guide-button gift-guide-button--primary gift-guide-banner__button" href="{{ section.settings.button_link | default: '#' }}">
+        <span>{{ section.settings.button_label }}</span>
+        {%- render 'gift-guide-arrow' -%}
+      </a>
+    {%- endif -%}
+
+  </div>
+
+</section>
+
+{%- comment %} Text bar: hidden when switched off or empty {% endcomment -%}
+{%- liquid
+  assign text_bar_text_desktop = section.settings.text_bar_text
+  assign text_bar_text_mobile = section.settings.text_bar_text_mobile | default: text_bar_text_desktop
+-%}
+{%- if section.settings.show_text_bar and text_bar_text_desktop != blank -%}
+  <div
+    class="gift-guide-text-bar"
+    style="
+      --gift-guide-text-bar-text: {{ section.settings.text_bar_text_color }};
+      --gift-guide-text-bar-background: {{ section.settings.text_bar_background_color }};
+    "
+  >
+    <div class="gift-guide-container">
+      <p class="gift-guide-text-bar__text">
+        <span class="gift-guide-text-bar__text-desktop">{{ text_bar_text_desktop }}</span>
+        <span class="gift-guide-text-bar__text-mobile">{{ text_bar_text_mobile }}</span>
+      </p>
+    </div>
+  </div>
+{%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Gift guide banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Images"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_desktop",
+      "label": "Desktop pattern image",
+      "info": "Recommended size: 2880 x 1560 px. Shown on desktop."
+    },
+    {
+      "type": "image_picker",
+      "id": "image_mobile",
+      "label": "Mobile pattern image",
+      "info": "Shown on mobile. If empty, the desktop image is used."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Gift Guide"
+    },
+    {
+      "type": "select",
+      "id": "heading_style",
+      "label": "Heading text style",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        },
+        {
+          "value": "body",
+          "label": "Body text"
+        }
+      ],
+      "default": "h1",
+      "info": "Changes the size and font only."
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season."
+    },
+    {
+      "type": "textarea",
+      "id": "description_mobile",
+      "label": "Mobile description",
+      "info": "Shown on mobile. If empty, the description above is used.",
+      "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
+    },
+    {
+      "type": "select",
+      "id": "description_style",
+      "label": "Description text style",
+      "options": [
+        {
+          "value": "h1",
+          "label": "H1"
+        },
+        {
+          "value": "h2",
+          "label": "H2"
+        },
+        {
+          "value": "h3",
+          "label": "H3"
+        },
+        {
+          "value": "h4",
+          "label": "H4"
+        },
+        {
+          "value": "h5",
+          "label": "H5"
+        },
+        {
+          "value": "h6",
+          "label": "H6"
+        },
+        {
+          "value": "body",
+          "label": "Body text"
+        }
+      ],
+      "default": "body",
+      "info": "Changes the size and font only."
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "info": "Colors the heading and description. Button colors are not affected.",
+      "default": "#000000"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_background",
+      "label": "Show white background behind the text",
+      "info": "Desktop only. Adds a white box behind the title, description and button.",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "SHOP NOW"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link"
+    },
+    {
+      "type": "header",
+      "content": "Text bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text_bar",
+      "label": "Show text bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text_bar_text",
+      "label": "Text",
+      "default": "SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL"
+    },
+    {
+      "type": "text",
+      "id": "text_bar_text_mobile",
+      "label": "Mobile text",
+      "info": "Optional. Leave empty to use the text above on mobile too.",
+      "default": "SUSTAINABLE, ETHICALLY MADE ACTIVEWEAR"
+    },
+    {
+      "type": "color",
+      "id": "text_bar_text_color",
+      "label": "Text color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_bar_background_color",
+      "label": "Background color",
+      "default": "#F5F5F5"
+    },
+    {
+      "type": "header",
+      "content": "Section space"
+    },
+    {
+      "type": "range",
+      "id": "space_top_desktop",
+      "label": "Space above section (desktop)",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "space_top_mobile",
+      "label": "Space above section (mobile)",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "space_bottom_desktop",
+      "label": "Space below section (desktop)",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "space_bottom_mobile",
+      "label": "Space below section (mobile)",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Gift guide banner"
+    }
+  ]
+}
+{% endschema %}
