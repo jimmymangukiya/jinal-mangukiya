@@ -78,7 +78,7 @@ body {
 
 /*
   Text styles: class "gift-guide-text" + one modifier, e.g. gift-guide-text gift-guide-text--h2.
-  The HTML tag (h1-h6, p) is chosen separately in the theme editor.
+  The HTML tag is fixed in each section; the theme editor only picks the style.
   Sizes mobile / desktop: h1 30/70, h2 24/36, h3 20, h4 18, h5 16, h6 12, body 16/20
 */
 

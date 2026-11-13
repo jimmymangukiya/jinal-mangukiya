@@ -17,14 +17,6 @@
   /* Cart requests */
 
   const CartApi = {
-    /** Returns the current cart (used to avoid adding the add-on product twice). */
-    async getCart() {
-      const response = await fetch(`${window.routes?.cart_url || '/cart'}.js`, {
-        headers: { Accept: 'application/json' },
-      });
-      return response.json();
-    },
-
     /** Adds the items in one request (all are added, or none). */
     async addItems(items) {
       const response = await fetch(`${window.routes?.cart_add_url || '/cart/add'}.js`, {
@@ -438,7 +430,7 @@
 
       try {
         const items = [{ id: variant.id, quantity: 1 }];
-        const addAddon = await this.shouldAddAddon(variant);
+        const addAddon = this.shouldAddAddon(variant);
         if (addAddon) items.push({ id: this.config.addonVariantId, quantity: 1 });
 
         await CartApi.addItems(items);
@@ -469,16 +461,15 @@
       }
     }
 
-    /** Add-on rule: Black + Medium also adds the add-on. Skipped when the add-on itself is added or is already in the cart. */
-    async shouldAddAddon(variant) {
+    /** Add-on rule: Black + Medium also adds the add-on. Skipped only when the add-on product itself is being added. */
+    shouldAddAddon(variant) {
       const { addonVariantId, addonProductId, triggerColor, triggerSize } = this.config;
       if (!addonVariantId || this.productId === addonProductId) return false;
 
       const values = variant.options.map((option) => option.toLowerCase());
       if (!values.includes(triggerColor) || !values.includes(triggerSize)) return false;
 
-      const cart = await CartApi.getCart();
-      return !cart.items.some((cartItem) => cartItem.variant_id === addonVariantId);
+      return true;
     }
 
     /* UI helpers */

@@ -4,7 +4,9 @@
 <script src="{{ 'gift-guide-grid.js' | asset_url }}" defer="defer"></script>
 
 {%- liquid
-  assign addon_product = section.settings.addon_product
+  if section.settings.enable_addon
+    assign addon_product = section.settings.addon_product
+  endif
   assign addon_variant = addon_product.selected_or_first_available_variant
   assign addon_image = addon_variant.featured_image | default: addon_product.featured_image
 -%}
@@ -28,10 +30,10 @@
   data-text-addon-added="{{ section.settings.text_addon_added | escape }}"
   data-text-choose="{{ section.settings.text_choose | escape }}"
   data-text-sold-out="{{ section.settings.text_sold_out | escape }}"
-  data-text-error="{{ section.settings.text_error | escape }}"
+  data-text-error="Something went wrong, please try again"
 >
   {%- if section.settings.heading != blank -%}
-    <{{ section.settings.heading_tag }} class="gift-guide-grid__heading gift-guide-text gift-guide-text--{{ section.settings.heading_style }}">{{ section.settings.heading }}</{{ section.settings.heading_tag }}>
+    <h2 class="gift-guide-grid__heading gift-guide-text gift-guide-text--{{ section.settings.heading_style }}">{{ section.settings.heading }}</h2>
   {%- endif -%}
 
   <ul class="gift-guide-grid__list" role="list">
@@ -68,7 +70,7 @@
             class="gift-guide-grid__hotspot"
             aria-haspopup="dialog"
             aria-controls="gift-guide-popup-{{ block.id }}"
-            aria-label="{{ section.settings.text_open_popup | escape }}: {{ product.title | escape }}"
+            aria-label="Choose options for: {{ product.title | escape }}"
             data-popup-open
           >
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" focusable="false">
@@ -116,39 +118,6 @@
     },
     {
       "type": "select",
-      "id": "heading_tag",
-      "label": "Heading HTML tag",
-      "options": [
-        {
-          "value": "h1",
-          "label": "H1"
-        },
-        {
-          "value": "h2",
-          "label": "H2"
-        },
-        {
-          "value": "h3",
-          "label": "H3"
-        },
-        {
-          "value": "h4",
-          "label": "H4"
-        },
-        {
-          "value": "h5",
-          "label": "H5"
-        },
-        {
-          "value": "h6",
-          "label": "H6"
-        }
-      ],
-      "default": "h2",
-      "info": "Use one H1 per page. The tag does not change how the text looks."
-    },
-    {
-      "type": "select",
       "id": "heading_style",
       "label": "Heading text style",
       "options": [
@@ -182,33 +151,42 @@
         }
       ],
       "default": "h2",
-      "info": "Sizes come from Figma (see the text styles in gift-guide-base.css)."
+      "info": "Changes the size and font only."
     },
     {
       "type": "header",
       "content": "Add-on product"
     },
     {
+      "type": "checkbox",
+      "id": "enable_addon",
+      "label": "Enable add-on product",
+      "default": true,
+      "info": "Turn off if you do not want an extra product added to the cart."
+    },
+    {
       "type": "paragraph",
-      "content": "When a variant with BOTH values below is added to the cart, the add-on product is added too."
+      "content": "When a variant with both the color and size below is added to the cart, the add-on product is added too."
     },
     {
       "type": "product",
       "id": "addon_product",
       "label": "Add-on product",
-      "info": "Select the \"Soft Winter Jacket\"."
+      "info": "This product is added automatically to the cart."
     },
     {
       "type": "text",
       "id": "trigger_color",
       "label": "Trigger color",
-      "default": "Black"
+      "default": "Black",
+      "info": "Color name of the variant, for example Black."
     },
     {
       "type": "text",
       "id": "trigger_size",
       "label": "Trigger size",
-      "default": "Medium"
+      "default": "Medium",
+      "info": "Size name of the variant, for example Medium."
     },
     {
       "type": "header",
@@ -216,15 +194,9 @@
     },
     {
       "type": "text",
-      "id": "text_open_popup",
-      "label": "Hotspot button label (screen readers)",
-      "default": "Choose options for"
-    },
-    {
-      "type": "text",
       "id": "text_choose",
       "label": "Message when an option is missing",
-      "info": "The option name is added at the end, e.g. \"Please choose your size\".",
+      "info": "The option name is added at the end, for example \"Please choose your size\".",
       "default": "Please choose your"
     },
     {
@@ -251,12 +223,6 @@
       "id": "text_sold_out",
       "label": "Message when the variant is sold out",
       "default": "This variant is sold out"
-    },
-    {
-      "type": "text",
-      "id": "text_error",
-      "label": "Generic error message",
-      "default": "Something went wrong, please try again"
     },
     {
       "type": "header",

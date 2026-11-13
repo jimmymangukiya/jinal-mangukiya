@@ -16,7 +16,7 @@
       class="gift-guide-header__menu-button"
       aria-expanded="false"
       aria-controls="gift-guide-header-content"
-      aria-label="{{ section.settings.menu_label | escape }}"
+      aria-label="Open menu"
       data-gift-guide-menu-button
     >
       <span class="gift-guide-header__menu-button-line"></span>
@@ -67,7 +67,7 @@
       "type": "range",
       "id": "logo_width",
       "label": "Logo width",
-      "info": "Same on desktop and mobile. Figma size is 151 x 19 px, the height follows the width (151:19).",
+      "info": "Same on desktop and mobile. The height follows the width.",
       "min": 100,
       "max": 200,
       "step": 1,
@@ -100,16 +100,6 @@
       "type": "url",
       "id": "button_link",
       "label": "Button link"
-    },
-    {
-      "type": "header",
-      "content": "Accessibility"
-    },
-    {
-      "type": "text",
-      "id": "menu_label",
-      "label": "Mobile menu button label",
-      "default": "Open menu"
     }
   ]
 }

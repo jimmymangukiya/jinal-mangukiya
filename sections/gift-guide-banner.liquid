@@ -43,16 +43,16 @@
   {%- comment %} White box behind the text (optional) {% endcomment -%}
   <div class="gift-guide-banner__text{% if section.settings.show_text_background %} gift-guide-banner__text--background{% endif %}">
     {%- if section.settings.heading != blank -%}
-      <{{ section.settings.heading_tag }} class="gift-guide-banner__heading gift-guide-text gift-guide-text--{{ section.settings.heading_style }}">{{ section.settings.heading }}</{{ section.settings.heading_tag }}>
+      <h1 class="gift-guide-banner__heading gift-guide-text gift-guide-text--{{ section.settings.heading_style }}">{{ section.settings.heading }}</h1>
     {%- endif -%}
 
     {%- comment %} Mobile shows a shorter description {% endcomment -%}
     {%- assign description_mobile = section.settings.description_mobile | default: section.settings.description -%}
     {%- if section.settings.description != blank -%}
-      <{{ section.settings.description_tag }} class="gift-guide-banner__description gift-guide-text gift-guide-text--{{ section.settings.description_style }}">
+      <p class="gift-guide-banner__description gift-guide-text gift-guide-text--{{ section.settings.description_style }}">
         <span class="gift-guide-banner__description-desktop">{{ section.settings.description }}</span>
         <span class="gift-guide-banner__description-mobile">{{ description_mobile }}</span>
-      </{{ section.settings.description_tag }}>
+      </p>
     {%- endif -%}
 
     {%- if section.settings.button_label != blank -%}
@@ -101,13 +101,13 @@
       "type": "image_picker",
       "id": "image_desktop",
       "label": "Desktop pattern image",
-      "info": "Recommended: 2880 x 1560 px. Shown behind the text from 990px up."
+      "info": "Recommended size: 2880 x 1560 px. Shown on desktop."
     },
     {
       "type": "image_picker",
       "id": "image_mobile",
       "label": "Mobile pattern image",
-      "info": "Shown below the text on small screens. Falls back to the desktop image."
+      "info": "Shown on mobile. If empty, the desktop image is used."
     },
     {
       "type": "header",
@@ -118,39 +118,6 @@
       "id": "heading",
       "label": "Heading",
       "default": "The Gift Guide"
-    },
-    {
-      "type": "select",
-      "id": "heading_tag",
-      "label": "Heading HTML tag",
-      "options": [
-        {
-          "value": "h1",
-          "label": "H1"
-        },
-        {
-          "value": "h2",
-          "label": "H2"
-        },
-        {
-          "value": "h3",
-          "label": "H3"
-        },
-        {
-          "value": "h4",
-          "label": "H4"
-        },
-        {
-          "value": "h5",
-          "label": "H5"
-        },
-        {
-          "value": "h6",
-          "label": "H6"
-        }
-      ],
-      "default": "h1",
-      "info": "Use one H1 per page. The tag does not change how the text looks."
     },
     {
       "type": "select",
@@ -187,7 +154,7 @@
         }
       ],
       "default": "h1",
-      "info": "Sizes come from Figma (see the text styles in gift-guide-base.css)."
+      "info": "Changes the size and font only."
     },
     {
       "type": "textarea",
@@ -199,49 +166,8 @@
       "type": "textarea",
       "id": "description_mobile",
       "label": "Mobile description",
-      "info": "Shown below 990px (Figma: only the first sentence). Leave empty to use the description above.",
+      "info": "Shown on mobile. If empty, the description above is used.",
       "default": "Discover Joy: Your Ultimate Holiday Gift Destination."
-    },
-    {
-      "type": "select",
-      "id": "description_tag",
-      "label": "Description HTML tag",
-      "options": [
-        {
-          "value": "h1",
-          "label": "H1"
-        },
-        {
-          "value": "h2",
-          "label": "H2"
-        },
-        {
-          "value": "h3",
-          "label": "H3"
-        },
-        {
-          "value": "h4",
-          "label": "H4"
-        },
-        {
-          "value": "h5",
-          "label": "H5"
-        },
-        {
-          "value": "h6",
-          "label": "H6"
-        },
-        {
-          "value": "p",
-          "label": "Paragraph (p)"
-        },
-        {
-          "value": "div",
-          "label": "Div"
-        }
-      ],
-      "default": "p",
-      "info": "Use one H1 per page. The tag does not change how the text looks."
     },
     {
       "type": "select",
@@ -278,7 +204,7 @@
         }
       ],
       "default": "body",
-      "info": "Sizes come from Figma (see the text styles in gift-guide-base.css)."
+      "info": "Changes the size and font only."
     },
     {
       "type": "color",
@@ -291,7 +217,7 @@
       "type": "checkbox",
       "id": "show_text_background",
       "label": "Show white background behind the text",
-      "info": "Desktop only. The background wraps the title, description and button.",
+      "info": "Desktop only. Adds a white box behind the title, description and button.",
       "default": true
     },
     {
